@@ -12,14 +12,12 @@ import CoreData
 class NewCourse: UIViewController, DetailsDelegate{
     
     @IBOutlet var nameField: UITextField!
-    @IBOutlet var frontOrBack: UISegmentedControl!
     var textFields: [UITextField]?
     var holeTimes: [String] = []
     
     func save(tfs: [UITextField]?){
         textFields = tfs
         let name: String = nameField.text!
-        let front: Bool = (frontOrBack.selectedSegmentIndex == 0) ? true : false
         
         for i in 0...17{
             holeTimes.append(textFields![i].text!)
@@ -30,7 +28,6 @@ class NewCourse: UIViewController, DetailsDelegate{
         let entity = NSEntityDescription.entityForName("Courses", inManagedObjectContext: context)
         let course = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: context)
         course.setValue(name, forKey: "name")
-        course.setValue(front, forKey: "front")
         course.setValue(holeTimes, forKey: "holeTimes")
         
         do {

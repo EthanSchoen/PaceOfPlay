@@ -13,13 +13,14 @@ class Run: UIViewController{
     
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var startLabel: UILabel!
-    @IBOutlet weak var frontBackLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet var frontOrBack: UISegmentedControl!
     var selectedCourse: NSManagedObject!
     let formatTime = NSDateFormatter()
     var startTime: NSDate!
     var times = [Double]()
     var currentHole = -1
+    var table: RunTable!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,8 +31,9 @@ class Run: UIViewController{
     
     func runThread(){
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            let mod = (self.frontOrBack.selectedSegmentIndex == 0) ? 0 : 10
             let now = NSDate()
-            for i in 0...self.times.count-1{
+            for i in 0+mod...self.times.count-1+mod{
                 if(self.startTime.dateByAddingTimeInterval(NSTimeInterval(self.times[i]*60)).compare(now) == NSComparisonResult.OrderedDescending){
                     self.currentHole = i + 1
                     break
@@ -64,18 +66,30 @@ class Run: UIViewController{
     func load(){
         if(selectedCourse != nil){
             nameLabel.text = selectedCourse.valueForKey("name") as? String
-            frontBackLabel.text = (selectedCourse.valueForKey("front") as! Bool) ? "Front" : "Back"
             formatTime.dateFormat = "h:mm a"
             startLabel.text = formatTime.stringFromDate(startTime)
         }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if(segue.identifier == "toTable") {
-            let table = segue.destinationViewController as! RunTable
+        if(segue.identifier == "toTable" && selectedCourse != nil) {
+            table = segue.destinationViewController as! RunTable
             table.holeTimes = selectedCourse.valueForKey("holeTimes") as? [String]
             table.start = startTime
+            table.front = frontOrBack.isEnabledForSegmentAtIndex(0)
         }
+        if(segue.identifier == "frontBackChange"){
+            table.holeTimes = selectedCourse.valueForKey("holeTimes") as? [String]
+            table.start = startTime
+            table.front = (frontOrBack.selectedSegmentIndex == 0) ? true : false
+            runThread()
+            table.modifyTimes()
+            table.reload()
+        }
+    }
+    
+    @IBAction func clearKeyboard(){
+        self.view.endEditing(true)
     }
     
     override func didReceiveMemoryWarning() {

@@ -13,18 +13,28 @@ class RunTable: UITableViewController {
     var holeTimes: [String]!
     var modHoles = [Double]()
     var start: NSDate!
-
+    var front: Bool!
+    var mod: Int!
+    
     func modifyTimes(){
         var temp = [Double]()
-        for i in 0...holeTimes.count-1{
+        mod = 0
+        if(!front){ //if  back
+            mod = 9
+        }
+        for i in 0...8{
             temp.append(0)
-            for j in 0...i{
+            for j in 0+mod...i+mod{
                 if(Double(holeTimes[j]) != nil){
                     temp[i] += Double(holeTimes[j])!
                 }
             }
         }
         modHoles = temp
+    }
+    
+    func reload(){
+        self.tableView.reloadData()
     }
     
     override func viewDidLoad() {
@@ -46,7 +56,7 @@ class RunTable: UITableViewController {
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 18
+        return 9
     }
 
     
@@ -59,7 +69,7 @@ class RunTable: UITableViewController {
         let formater = NSDateFormatter()
         formater.dateFormat = "h:mm a"
         let time = formater.stringFromDate(temp)
-        cell.textLabel?.text = "Hole \(indexPath.row+1)-\(time)"
+        cell.textLabel?.text = "Hole \(indexPath.row+1+mod)-\(time)"
         return cell
     }
  
