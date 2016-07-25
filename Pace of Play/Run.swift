@@ -38,6 +38,9 @@ class Run: UIViewController{
                     self.currentHole = i + 1
                     break
                 }
+                if(i == 8+mod){
+                    self.currentHole = i+1
+                }
             }
             dispatch_async(dispatch_get_main_queue()) {
                 if(self.currentHole != -1){
