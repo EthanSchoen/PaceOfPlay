@@ -31,9 +31,9 @@ class Run: UIViewController{
     
     func runThread(){
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            let mod = (self.frontOrBack.selectedSegmentIndex == 0) ? 0 : 10
+            let mod = (self.frontOrBack.selectedSegmentIndex == 0) ? 0 : 9
             let now = NSDate()
-            for i in 0+mod...self.times.count-1+mod{
+            for i in 0+mod...8+mod{
                 if(self.startTime.dateByAddingTimeInterval(NSTimeInterval(self.times[i]*60)).compare(now) == NSComparisonResult.OrderedDescending){
                     self.currentHole = i + 1
                     break
@@ -52,9 +52,17 @@ class Run: UIViewController{
     func modifyTimes()->[Double]{
         var temp = [Double]()
         let holeTimes = selectedCourse.valueForKey("holeTimes") as! [String]
-        for i in 0...holeTimes.count-1{
+        for i in 0...8{
             temp.append(0)
             for j in 0...i{
+                if(Double(holeTimes[j]) != nil){
+                    temp[i] += Double(holeTimes[j])!
+                }
+            }
+        }
+        for i in 9...17{
+            temp.append(0)
+            for j in 9...i{
                 if(Double(holeTimes[j]) != nil){
                     temp[i] += Double(holeTimes[j])!
                 }
