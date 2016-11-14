@@ -16,8 +16,8 @@ class Run: UIViewController{
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet var frontOrBack: UISegmentedControl!
     var selectedCourse: NSManagedObject!
-    let formatTime = NSDateFormatter()
-    var startTime: NSDate!
+    let formatTime = DateFormatter()
+    var startTime: Date!
     var times = [Double]()
     var currentHole = -1
     var table: RunTable!
@@ -26,15 +26,15 @@ class Run: UIViewController{
         super.viewDidLoad()
         load()
         times = modifyTimes()
-        _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(Run.runThread), userInfo: nil, repeats: true)
+        _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(Run.runThread), userInfo: nil, repeats: true)
     }
     
     func runThread(){
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+        DispatchQueue.global().async {
             let mod = (self.frontOrBack.selectedSegmentIndex == 0) ? 0 : 9
-            let now = NSDate()
+            let now = Date()
             for i in 0+mod...8+mod{
-                if(self.startTime.dateByAddingTimeInterval(NSTimeInterval(self.times[i]*60)).compare(now) == NSComparisonResult.OrderedDescending){
+                if(self.startTime.addingTimeInterval(TimeInterval(self.times[i]*60)).compare(now) == ComparisonResult.orderedDescending){
                     self.currentHole = i + 1
                     break
                 }
@@ -42,7 +42,7 @@ class Run: UIViewController{
                     self.currentHole = i+1
                 }
             }
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 if(self.currentHole != -1){
                     self.statusLabel.text = "You should be on Hole \(self.currentHole)"
                 }else{
@@ -54,7 +54,7 @@ class Run: UIViewController{
     
     func modifyTimes()->[Double]{
         var temp = [Double]()
-        let holeTimes = selectedCourse.valueForKey("holeTimes") as! [String]
+        let holeTimes = selectedCourse.value(forKey: "holeTimes") as! [String]
         for i in 0...8{
             temp.append(0)
             for j in 0...i{
@@ -76,21 +76,21 @@ class Run: UIViewController{
     
     func load(){
         if(selectedCourse != nil){
-            nameLabel.text = selectedCourse.valueForKey("name") as? String
+            nameLabel.text = selectedCourse.value(forKey: "name") as? String
             formatTime.dateFormat = "h:mm a"
-            startLabel.text = formatTime.stringFromDate(startTime)
+            startLabel.text = formatTime.string(from: startTime)
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(segue.identifier == "toTable" && selectedCourse != nil) {
-            table = segue.destinationViewController as! RunTable
-            table.holeTimes = selectedCourse.valueForKey("holeTimes") as? [String]
+            table = segue.destination as! RunTable
+            table.holeTimes = selectedCourse.value(forKey: "holeTimes") as? [String]
             table.start = startTime
-            table.front = frontOrBack.isEnabledForSegmentAtIndex(0)
+            table.front = frontOrBack.isEnabledForSegment(at: 0)
         }
         if(segue.identifier == "frontBackChange"){
-            table.holeTimes = selectedCourse.valueForKey("holeTimes") as? [String]
+            table.holeTimes = selectedCourse.value(forKey: "holeTimes") as? [String]
             table.start = startTime
             table.front = (frontOrBack.selectedSegmentIndex == 0) ? true : false
             runThread()

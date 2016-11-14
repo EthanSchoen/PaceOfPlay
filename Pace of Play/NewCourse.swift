@@ -15,7 +15,7 @@ class NewCourse: UIViewController, DetailsDelegate{
     var textFields: [UITextField]?
     var holeTimes: [String] = []
     
-    func save(tfs: [UITextField]?){
+    func save(_ tfs: [UITextField]?){
         textFields = tfs
         let name: String = nameField.text!
         
@@ -24,9 +24,9 @@ class NewCourse: UIViewController, DetailsDelegate{
         }
         
         //start save
-        let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-        let entity = NSEntityDescription.entityForName("Courses", inManagedObjectContext: context)
-        let course = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: context)
+        let context = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: "Courses", in: context)
+        let course = NSManagedObject(entity: entity!, insertInto: context)
         course.setValue(name, forKey: "name")
         course.setValue(holeTimes, forKey: "holeTimes")
         
@@ -37,9 +37,9 @@ class NewCourse: UIViewController, DetailsDelegate{
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if(segue.destinationViewController is InputTable){
-            let controller = segue.destinationViewController as! InputTable
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if(segue.destination is InputTable){
+            let controller = segue.destination as! InputTable
             controller.delegate = self
         }
     }

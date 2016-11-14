@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DetailsDelegate: class {
-    func save(tfs: [UITextField]?)
+    func save(_ tfs: [UITextField]?)
 }
 
 class InputTable: UITableViewController {
@@ -17,7 +17,7 @@ class InputTable: UITableViewController {
     var delegate: DetailsDelegate?
     var tfs: [UITextField]!
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         delegate?.save(tfs)
     }
@@ -29,11 +29,11 @@ class InputTable: UITableViewController {
         // self.clearsSelectionOnViewWillAppear = false
         tfs = []
         for _ in 0...17{
-            let tf = UITextField(frame: CGRectMake(80, 5, 100, 35))
-            tf.borderStyle = UITextBorderStyle.RoundedRect
-            tf.textColor = UIColor.blackColor()
+            let tf = UITextField(frame: CGRect(x: 80, y: 5, width: 100, height: 35))
+            tf.borderStyle = UITextBorderStyle.roundedRect
+            tf.textColor = UIColor.black
             tf.placeholder = "Minutes"
-            tf.keyboardType = UIKeyboardType.NumberPad
+            tf.keyboardType = UIKeyboardType.numberPad
             tfs.append(tf)
         }
     }
@@ -45,17 +45,17 @@ class InputTable: UITableViewController {
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 18
     }
 
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("inputCell", forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "inputCell", for: indexPath)
         
         // Configure the cell...
         cell.textLabel?.text = "Hole \(indexPath.row + 1):"

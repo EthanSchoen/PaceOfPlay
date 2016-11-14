@@ -12,7 +12,7 @@ class RunTable: UITableViewController {
     
     var holeTimes: [String]!
     var modHoles = [Double]()
-    var start: NSDate!
+    var start: Date!
     var front: Bool!
     var mod: Int!
     
@@ -49,26 +49,26 @@ class RunTable: UITableViewController {
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return 9
     }
 
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("holes", forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "holes", for: indexPath)
 
         // Configure the cell...
         var temp = start
-        temp = temp.dateByAddingTimeInterval(NSTimeInterval(modHoles[indexPath.row]*60))
-        let formater = NSDateFormatter()
+        temp = temp?.addingTimeInterval(TimeInterval(modHoles[indexPath.row]*60))
+        let formater = DateFormatter()
         formater.dateFormat = "h:mm a"
-        let time = formater.stringFromDate(temp)
+        let time = formater.string(from: temp!)
         cell.textLabel?.text = "Hole \(indexPath.row+1+mod)-\(time)"
         return cell
     }
